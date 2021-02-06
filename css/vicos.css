@@ -1,0 +1,43 @@
+/* core */
+
+
+
+
+/* style */
+* {
+    margin: 0;
+    padding: 0;
+}
+body {
+    font-size: 20px;
+    font-family: 'Lato', sans-serif;
+    color:  rgba(112, 104, 151, 1);
+    background:  rgba(235, 207, 196, .8);
+}
+h2 {
+    font-size: 26px;
+    line-height: 30px;
+    margin-bottom: 15px;
+    font-weight: 600;
+    color: rgba(112, 104, 151, 1);
+}
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+p {
+    margin-bottom: 30px;
+}
+section {
+    background: rgba(255, 255, 255, 1);
+    padding: 40px 0 10px;
+    position: relative;
+    z-index: 300;
+}
+section:last-of-type {
+    margin-bottom: 0;
+}
+img {
+    width: 100%;
+    height: auto;
+}

@@ -2,7 +2,6 @@
 
 
 
-
 /* style */
 * {
     margin: 0;
@@ -29,10 +28,10 @@ p {
     margin-bottom: 30px;
 }
 section {
-    background: rgba(255, 255, 255, 1);
-    padding: 40px 0 10px;
+    padding: 50px 0;
     position: relative;
     z-index: 300;
+    background: white;
 }
 section:last-of-type {
     margin-bottom: 0;
@@ -40,4 +39,31 @@ section:last-of-type {
 img {
     width: 100%;
     height: auto;
+}
+
+
+
+
+
+.vicos {
+    background: transparent;
+    padding: 0;
+}
+.vicos .content-wrap{
+    position: relative;
+    min-height: 130vh;    
+    border-top: 2px solid white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.vicos .content-wrap:last-child {
+    border-bottom: 2px solid white;
+}
+.vicos .content-inner{
+    max-width: 500px;    
+    top: 50%;
+    left: 20%;
+    background: white;
+    padding: 40px 40px 10px 40px;
 }

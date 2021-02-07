@@ -12,6 +12,7 @@ var vicos = (function () {
 	let api = {};
     let getElemetsDOM;
     let getVicosStage;
+    let currentVicos;
 
     api.data = {};
     api.data.content = [];
@@ -124,21 +125,23 @@ var vicos = (function () {
             // Setze data attribut zu späteren Indexierung
             vicosElem.setAttribute('data-vicos-index', index);
 
-
-
-
-
-            // Viewport einbauen für getElemetsDOM
+            // Viewport einbauen für jedes Vicos
+            let lock = true;
             document.addEventListener("scroll", function () {
                 if(isVisible(vicosElem)) {
-                    if(checkIndex != index) {
-                        console.log(vicosElem.getAttribute('data-vicos-index'));
+                    if(lock) {
+                        currentVicos = vicosElem.getAttribute('data-vicos-index');
+
+                        // api.next einmal ausführen mit nächstem parameter
+                        api.next(currentVicos);
+
+
+
+
+                        lock = false;
                     }
                 } 
             });
-
-
-
             
         });
 
@@ -156,26 +159,8 @@ var vicos = (function () {
         // Füge Vicos Stage in Body ein
         document.body.append(getVicosStage);
 
-
-
-
-
-
-
-
+        console.log(api);
         
-
-       
-
-
-
-
-
-
-
-
-
-
         // Update ausführen und auf Resize Listenen
         api.update();
         window.addEventListener('resize', function() {
@@ -188,7 +173,11 @@ var vicos = (function () {
     /**
      * UPDATE METHOD
      */
-    api.update = function () { 
+    api.update = function () {  
+
+         // Aktuelle Vicos breite und höhe ermittel und in api.data.scale setzen
+         api.data.scale.width = getElemetsDOM[0].clientWidth;
+         api.data.scale.height = window.innerHeight;
 
 
         // Vicos Stage berechne die Ausgabeverhältnis
@@ -198,41 +187,49 @@ var vicos = (function () {
             'left': ((window.innerWidth / 2) - (api.data.scale.width / 2)) - 8 + 'px',
             'width': api.data.scale.width + 'px',
             'height': api.data.scale.height + 'px',
-            'overflow': 'hidden',
-            'opacity': 0
+            'overflow': 'hidden'            
         }); 
 
-
-
-        // Lade 1. Pallete von Images in vicos-stage
-        for(let image of api.data.content[0].images) {
+         // Lade aktuelle Pallete von Images in vicos-stage
+         for(let image of getVicosStage.children) {
 
             // berechne das Ausgabeverhältnis und position des Images
             let ration;
-            setTimeout(function() { // ACHTUNG NOCH KONTROLLIEREN, WARUM setTimeout??? !!!!!!!!!!!!!!!!!
-                ration = calculateAspectRatioFit(image.clientWidth, image.clientHeight, api.data.scale.width, api.data.scale.height);
-                
-                Object.assign(image.style,  {
-                    'position': 'absolute',
-                    'top': 0,
-                    'left': -(ration.width - api.data.scale.width) / 2 + 'px',
-                    'width': ration.width + 'px',
-                    'height': ration.height + 'px'
-                }); 
-            }, 10);
+            
+            ration = calculateAspectRatioFit(image.clientWidth, image.clientHeight, api.data.scale.width, api.data.scale.height);
+            
+            Object.assign(image.style,  {
+                'position': 'absolute',
+                'top': 0,
+                'left': -(ration.width - api.data.scale.width) / 2 + 'px',
+                'width': ration.width + 'px',
+                'height': ration.height + 'px'
+            }); 
+        
 
             // Nach setTimeout schalte Vicos Stage sichtbar
             getVicosStage.style.opacity = 1;
 
+        }
 
+    }
+
+    /**
+     * NEXT METHOD
+     */
+    api.next = function (step) { 
+
+        // Lehre den aktuellen Vicos Stage
+        getVicosStage.innerHTML = '';
+
+        // Lade aktuelle Pallete von Images in vicos-stage
+        for(let image of api.data.content[step].images) {           
             getVicosStage.append(image);
         }
 
+        api.update();
 
-
-
-        console.log(api)
-
+        console.log(step)
     }
 
 

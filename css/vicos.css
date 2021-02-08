@@ -71,7 +71,7 @@ img {
 
 .vicos-image.active {
     z-index: 10;
-    animation: show .15s forwards linear, zoom 20s forwards linear;
+    /* animation: show .15s forwards linear, zoom 20s forwards linear;*/
 }
 
 @keyframes show {

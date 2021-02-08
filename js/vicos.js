@@ -10,6 +10,7 @@ var vicos = (function () {
 	// Variables
 	//
 	let api = {};
+    let scrollPos = 0;
     let getElemetsDOM;
     let getVicosStage;
     let currentVicosIndex;
@@ -22,14 +23,29 @@ var vicos = (function () {
     api.data.content = [];
     api.data.scale = {};
 
-    // Ermittel aktuelle Y Koordinate des window objects
-    document.addEventListener("scroll", function () {
-        currentScrollDirection = window.scrollY;
+    
+    // ermitteln der scroll richtung
+    window.addEventListener('scroll', function(){
+        // detects new state and compares it with the new one
+        if ((document.body.getBoundingClientRect()).top > scrollPos) {
+            document.body.setAttribute('data-scroll-direction', 'top');
+        }  
+        else {
+            document.body.setAttribute('data-scroll-direction', 'bottom');
+        }
+        // saves the new position for iteration.
+        scrollPos = (document.body.getBoundingClientRect()).top;
 
+        // TEMP
+        document.querySelector('#log').textContent = window.scrollY;
+    });
 
-        document.querySelector('#log').textContent = currentScrollDirection;
-    })
-
+    // funktion zum erstellen eines IntersectionObservers
+    function createIntersectionObserver (elem, callback, options) {
+        let observer = new IntersectionObserver(callback, options || {});
+        observer.observe(elem);
+        return observer;
+    }
 
 	//
 	// Methods
@@ -143,52 +159,63 @@ var vicos = (function () {
             vicosElem.setAttribute('data-vicos-index', index);
 
             // Setze data attribut für späteren lock
-            vicosElem.setAttribute('data-vicos-active', false);
+            vicosElem.setAttribute('data-vicos-active', false);  
+
+            // Viewport -> IntersectionObserver auf vicosElem anwenden
+            createIntersectionObserver(vicosElem, function(entries, obs) {
+
+                entries.forEach(function (entry, index) {
+
+                     // setze currentVicosIndex auf akzuellen in index
+                     currentVicosIndex = vicosElem.getAttribute('data-vicos-index');
+
+                     if(lastVicosIndex !== currentVicosIndex) {
+                         
+                         // api.next einmal ausführen mit nächstem parameter
+                         api.next(currentVicosIndex);
+ 
+                         // Setze alle data-vicos-active auf false und aktiven data-vicos-active auf true
+                         for(let vico of getElemetsDOM){
+                             vico.setAttribute('data-vicos-active', false);
+                         }
+                         vicosElem.setAttribute('data-vicos-active', true);                        
+ 
+                         // ermöglichen das pro vicos api.next nur einmal ausgeführt wird
+                         lastVicosIndex = currentVicosIndex;
+ 
+                     }
 
 
-            // ermittel eingang - top oder bottom und wandel in int um
-            // const top = parseInt((vicosElem.getBoundingClientRect().top - window.outerHeight).toFixed()) ;
-            // const bottom = parseInt(vicosElem.getBoundingClientRect().bottom + vicosElem.clientHeight.toFixed());
-            
+                    if(entries[index].boundingClientRect.top < 0) {
+                        if(document.body.getAttribute('data-scroll-direction') === 'top') {
 
-            // Viewport einbauen für jedes Vicos Element
-            document.addEventListener("scroll", function () {
-
-                
-               //console.log('top: ' + top + ' | bottom: ' + bottom + ' | Current: ' + currentScrollDirection);
-
-
-                // if(currentScrollDirection >= top && currentScrollDirection <= top +  100) {
-                //     console.log('top');
-                // }
-                // if(currentScrollDirection >= bottom && currentScrollDirection <= bottom +  100) {
-                //     console.log('bottom');
-                // }
-
-                if(isVisible(vicosElem)) {
-                    
-                                 
-                    // setze currentVicosIndex auf akzuellen in index
-                    currentVicosIndex = vicosElem.getAttribute('data-vicos-index');
-
-                    if(lastVicosIndex !== currentVicosIndex) {
-                        
-                        // api.next einmal ausführen mit nächstem parameter
-                        api.next(currentVicosIndex);
-
-                        // Setze alle data-vicos-active auf false und aktiven data-vicos-active auf true
-                        for(let vico of getElemetsDOM){
-                            vico.setAttribute('data-vicos-active', false);
+                            // enter top                            
+                            getVicosStage.setAttribute('data-vicos-enter', 'top');                           
+                            // setze erste Element auf z-index 2
+                            Object.assign(getVicosStage.children[getVicosStage.children.length - 1].style,  {
+                                'z-index': 2,
+                            }); 
+                          
                         }
-                        vicosElem.setAttribute('data-vicos-active', true);                        
+                    } else {
+                        if(document.body.getAttribute('data-scroll-direction') === 'bottom') {
 
-                        // ermöglichen das pro vicos api.next nur einmal ausgeführt wird
-                        lastVicosIndex = currentVicosIndex;
+                            // enter bottom                            
+                            getVicosStage.setAttribute('data-vicos-enter', 'bottom');
+                           // setze letztes Element auf z-index 2
+                            Object.assign(getVicosStage.children[0].style,  {
+                                'z-index': 2,
+                            }); 
 
+
+                        }
                     }
-                        
-                  
-                } 
+
+                   
+                });
+                
+            }, {
+                //rootMargin: '150px'
             });
             
         });
@@ -299,7 +326,7 @@ var vicos = (function () {
                 if(isVisible(slideElem)) {
                     
                                  
-                    // setze currentVicosIndex auf akzuellen in index
+                    // setze currentVicosIndex auf aktuellen index
                     currentSlideElemIndex = slideElem.getAttribute('data-slide-index');
     
                     if(lastSlideElemIndex !== currentSlideElemIndex) {
@@ -318,6 +345,7 @@ var vicos = (function () {
                         getSlideImages[currentSlideElemIndex].classList.add('active');
                      
                         lastSlideElemIndex = currentSlideElemIndex;
+                        
     
                     }
                         

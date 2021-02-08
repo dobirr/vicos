@@ -71,7 +71,13 @@ img {
 
 .vicos-image.active {
     z-index: 10;
-    /* animation: show .15s forwards linear, zoom 20s forwards linear;*/
+}
+
+.ani_zoom {
+    animation: zoom 20s forwards linear;
+}
+.ani_fade {
+    animation: show .15s forwards linear;
 }
 
 @keyframes show {

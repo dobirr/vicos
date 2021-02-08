@@ -18,6 +18,7 @@ var vicos = (function () {
     let currentSlideElemIndex;
     let lastSlideElemIndex;
     let currentScrollDirection;
+    let aniCount = 0;
 
     api.data = {};
     api.data.content = [];
@@ -163,7 +164,7 @@ var vicos = (function () {
 
             // Viewport -> IntersectionObserver auf vicosElem anwenden
             createIntersectionObserver(vicosElem, function(entries, obs) {
-
+                aniCount = 0;
                 entries.forEach(function (entry, index) {
 
                      // setze currentVicosIndex auf akzuellen in index
@@ -318,22 +319,25 @@ var vicos = (function () {
         let getSlideImages = Array.prototype.slice.call(getVicosStage.children);
 
         
+        
         getSlides.forEach(function(slideElem, index) {
-
-
+            
+            
             document.addEventListener("scroll", function () {
-
+                
                 if(isVisible(slideElem)) {
                     
-                                 
+                       
                     // setze currentVicosIndex auf aktuellen index
                     currentSlideElemIndex = slideElem.getAttribute('data-slide-index');
     
                     if(lastSlideElemIndex !== currentSlideElemIndex) {
-
+                        
+                        //console.log(aniCount);  
 
                         for(let image of getSlideImages) {
                             image.classList.remove('active');
+                            image.classList.remove('ani_zoom');
                             Object.assign(image.style,  {
                                 'z-index': 1,
                             }); 
@@ -343,16 +347,19 @@ var vicos = (function () {
                         }); 
 
                         getSlideImages[currentSlideElemIndex].classList.add('active');
+                        getSlideImages[currentSlideElemIndex].classList.add('ani_zoom');
                      
                         lastSlideElemIndex = currentSlideElemIndex;
+
+                        aniCount++;
                         
     
                     }
-                        
+                    
+                    
                   
                 } 
             });
-
 
         })
 

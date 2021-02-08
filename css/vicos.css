@@ -53,8 +53,7 @@ img {
 }
 .vicos .content-wrap{
     position: relative;
-    min-height: 140vh;    
-    border-top: 2px solid white;
+    min-height: 130vh;  
     display: flex;
     justify-content: center;
     align-items: center;
@@ -72,7 +71,7 @@ img {
 
 .vicos-image.active {
     z-index: 10;
-    animation: show .3s forwards linear, zoom 20s forwards linear;
+    animation: show .15s forwards linear, zoom 20s forwards linear;
 }
 
 @keyframes show {
